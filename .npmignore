@@ -1,0 +1,10 @@
+# os
+.DS_Store
+Thumbs.db
+
+# lib
+.env
+/src
+*.log
+/migrations
+/coverage

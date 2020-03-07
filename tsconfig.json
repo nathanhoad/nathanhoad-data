@@ -1,0 +1,8 @@
+{
+  "exclude": ["bin", "dist", "node_modules", "**/*.test.*"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "declaration": true
+  }
+}

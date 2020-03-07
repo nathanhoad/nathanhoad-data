@@ -1,0 +1,11 @@
+# os
+.DS_Store
+Thumbs.db
+
+# lib
+node_modules
+.env
+/dist
+*.log
+/migrations
+/coverage

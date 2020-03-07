@@ -83,8 +83,8 @@ async function runMigrate() {
     return;
   }
 
-  console.log(Chalk.bold.green(`\n# Migrated group ${group}`));
-  files.forEach(file => console.log(file));
+  console.log(Chalk.bold.green(`\n# Migrated group ${group}\n`));
+  files.forEach(file => console.log(file.replace(/\.ts$/, "")));
   console.log("");
 }
 
@@ -99,7 +99,7 @@ async function runRollback() {
   }
 
   console.log(Chalk.bold.yellow(`\n# Rolled back group ${group}\n`));
-  files.forEach(file => console.log(file));
+  files.forEach(file => console.log(file.replace(/\.ts$/, "")));
   console.log("");
 }
 
@@ -158,6 +158,8 @@ async function runSchema(args) {
       console.log(`${Chalk.bold(key)}: ${column.type} ${meta}`);
     });
   });
+
+  console.log("");
 }
 
 async function runTypes(args) {

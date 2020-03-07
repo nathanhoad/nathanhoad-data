@@ -7,4 +7,5 @@ export default function data() {
 }
 
 export { Database };
+export { IModel } from "./types";
 export { uuid, hashify, slugify, filterKeys } from "./util";

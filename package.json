@@ -1,6 +1,6 @@
 {
   "name": "@nathanhoad/data",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A small ORM that uses Typescript and plain objects",
   "main": "dist/index.js",
   "bin": {

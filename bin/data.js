@@ -84,7 +84,7 @@ async function runMigrate() {
   }
 
   console.log(Chalk.bold.green(`\n# Migrated group ${group}`));
-  files.forEach(console.log);
+  files.forEach(file => console.log(file));
   console.log("");
 }
 
@@ -99,7 +99,7 @@ async function runRollback() {
   }
 
   console.log(Chalk.bold.yellow(`\n# Rolled back group ${group}\n`));
-  files.forEach(console.log);
+  files.forEach(file => console.log(file));
   console.log("");
 }
 

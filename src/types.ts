@@ -66,7 +66,7 @@ export interface SavedRelation<T> {
 
 export class RelationError extends Error {}
 
-export type Hook<T> = (object: T, options?: QueryOptions) => Promise<T> | T | void;
+export type Hook<T> = (object: T, options?: QueryOptions) => Promise<T> | T | Promise<void> | void;
 
 export type Context<T> = string | string[] | ContextFunction<T>;
 

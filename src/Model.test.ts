@@ -269,10 +269,68 @@ describe("Collections", () => {
     lists = await Lists.all();
     expect(lists.length).toBe(0);
   });
+
+  it("can list models that match a jsonb query", async () => {
+    expect.hasAssertions();
+
+    await createTable("lists", "name:string", "tasks:jsonb");
+
+    interface IListModel extends IModel {
+      name: string;
+      tasks: Array<{
+        id: string;
+        category: string;
+        description: string;
+      }>;
+    }
+
+    const Lists = database.model<IListModel>("lists");
+
+    const newLists = [
+      {
+        name: "Todo",
+        tasks: [
+          {
+            id: uuid(),
+            category: "work",
+            description: "Finish writing tests"
+          },
+          {
+            id: uuid(),
+            category: "not work",
+            description: "Play Animal Crossing"
+          }
+        ]
+      },
+      {
+        name: "Done",
+        tasks: [
+          {
+            id: uuid(),
+            category: "work",
+            description: "Implement json field searching"
+          }
+        ]
+      }
+    ];
+
+    await Lists.save(newLists);
+    const lists = await Lists.all();
+    expect(lists).toHaveLength(2);
+
+    // 'work' should find both lists
+    const both = await Lists.whereJSONBContains("tasks", { category: "work" }).all();
+    expect(both).toHaveLength(2);
+
+    // 'not work' should just be Todo
+    const justTodo = await Lists.whereJSONBContains("tasks", { category: "not work" }).all();
+    expect(justTodo).toHaveLength(1);
+    expect(justTodo[0].name).toBe("Todo");
+  });
 });
 
-describe("JSON", () => {
-  it("can convert a model to json", () => {
+describe("Context", () => {
+  it("can limit model fields to a context", () => {
     expect.hasAssertions();
 
     interface IUserModel extends IModel {
@@ -328,7 +386,7 @@ describe("JSON", () => {
     expect(json5.fullName).toBe(user.firstName + " " + user.lastName);
   });
 
-  it("can convert a list of models to json", () => {
+  it("can limit a list of models to a context", () => {
     expect.hasAssertions();
 
     interface IUserModel extends IModel {
@@ -487,7 +545,7 @@ describe("JSON", () => {
     }).toThrow();
   });
 
-  it("can convert a model to json that has relations on it", () => {
+  it("can limit a model that has relations on it to a context ", () => {
     expect.hasAssertions();
 
     interface IUserModel extends IModel {

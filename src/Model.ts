@@ -282,7 +282,7 @@ export default class Model<T extends IModel> {
    * @param operator optional
    * @param value optional
    */
-  public where(where: { [field: string]: any } | string, operator?: string, value?: any) {
+  public where(where: { [column: string]: any } | string, operator?: string, value?: any) {
     let query = this.query().clone();
 
     if (!operator) {
@@ -338,6 +338,15 @@ export default class Model<T extends IModel> {
       .clone()
       .whereNotNull(column);
     return this.chain(query);
+  }
+
+  /**
+   * Add a WHERE clause for partial matching JSONB values
+   * @param column A JSONB column
+   * @param value A partial object matching the JSONB column
+   */
+  public whereJSONBContains(column: string, value: any) {
+    return this.where(column, "@>", JSON.stringify([value]));
   }
 
   /**

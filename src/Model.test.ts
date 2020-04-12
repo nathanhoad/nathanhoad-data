@@ -684,10 +684,12 @@ describe("Hooks", () => {
       }
     });
 
-    const list = await Lists.create({ name: "New List" });
-
-    expect(list.dueDate).not.toBeUndefined();
+    let list = await Lists.create({ name: "New List" });
     expect(list.dueDate.getFullYear()).toBe(2020);
+
+    // No due date when skipping hooks
+    list = await Lists.create({ name: "Another List" }, { skipHooks: true });
+    expect(list.dueDate).toBeNull();
   });
 
   it("cancels a save when beforeCreate throws", async () => {
@@ -709,7 +711,6 @@ describe("Hooks", () => {
     });
 
     const list = await Lists.create({ name: "New List" });
-
     expect(list.name).toBe("New List");
     expect(list.id).toBeUndefined();
   });
@@ -739,7 +740,10 @@ describe("Hooks", () => {
     expect(list.saveCount).toBe(1);
 
     list = await Lists.save(list);
+    expect(list.saveCount).toBe(2);
 
+    // Shouldn't update the counter when skipping hooks
+    list = await Lists.save(list, { skipHooks: true });
     expect(list.saveCount).toBe(2);
   });
 
@@ -764,9 +768,12 @@ describe("Hooks", () => {
     });
 
     let list = await Lists.create({ name: "New List" });
-
     expect(list.name).toBe("New List");
-    expect(didSave).toHaveBeenCalled();
+    expect(didSave).toHaveBeenCalledTimes(1);
+
+    // Won't call didSave() again
+    list = await Lists.create({ name: "Another List" }, { skipHooks: true });
+    expect(didSave).toHaveBeenCalledTimes(1);
   });
 
   it("exposes afterSave", async () => {
@@ -790,9 +797,12 @@ describe("Hooks", () => {
     });
 
     let list = await Lists.create({ name: "New List" });
-
     expect(list.name).toBe("New List");
-    expect(didSave).toHaveBeenCalled();
+    expect(didSave).toHaveBeenCalledTimes(1);
+
+    // Won't call didSave() again
+    list = await Lists.create({ name: "Another List" }, { skipHooks: true });
+    expect(didSave).toHaveBeenCalledTimes(1);
   });
 
   it("exposes beforeDestroy", async () => {
@@ -817,8 +827,12 @@ describe("Hooks", () => {
 
     let list = await Lists.create({ name: "New List" });
     await Lists.destroy(list);
+    expect(didDestroy).toHaveBeenCalledTimes(1);
 
-    expect(didDestroy).toHaveBeenCalled();
+    // Won't call didDestroy() again
+    list = await Lists.create({ name: "Another List" });
+    await Lists.destroy(list, { skipHooks: true });
+    expect(didDestroy).toHaveBeenCalledTimes(1);
   });
 
   it("cancels a destroy when beforeDestroy throws", async () => {
@@ -873,8 +887,12 @@ describe("Hooks", () => {
 
     let list = await Lists.create({ name: "New List" });
     await Lists.destroy(list);
+    expect(didDestroy).toHaveBeenCalledTimes(1);
 
-    expect(didDestroy).toHaveBeenCalled();
+    // Won't call didDestroy() again
+    list = await Lists.create({ name: "New List" });
+    await Lists.destroy(list, { skipHooks: true });
+    expect(didDestroy).toHaveBeenCalledTimes(1);
   });
 
   it("runs a bunch of hooks", async () => {

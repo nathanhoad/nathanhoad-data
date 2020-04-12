@@ -27,6 +27,7 @@ export interface QueryOptions {
   transaction?: Knex.Transaction;
   exists?: boolean;
   updatedAt?: Date;
+  skipHooks?: boolean;
 }
 
 export enum RelationTypes {

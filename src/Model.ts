@@ -140,10 +140,12 @@ export default class Model<T extends IModel> {
     }
 
     // beforeDestroy hook can cancel the destroy
-    try {
-      await this.runHook("beforeDestroy", object);
-    } catch (err) {
-      return object;
+    if (!options.skipHooks) {
+      try {
+        await this.runHook("beforeDestroy", object);
+      } catch (err) {
+        return object;
+      }
     }
 
     await this.knex({ ...options })
@@ -169,7 +171,9 @@ export default class Model<T extends IModel> {
       );
     }
 
-    this.runHook("afterDestroy", object);
+    if (!options.skipHooks) {
+      this.runHook("afterDestroy", object);
+    }
 
     return object;
   }
@@ -231,14 +235,16 @@ export default class Model<T extends IModel> {
             .then((rows: any) => rows.length > 0);
 
     // Before hooks can cancel a save
-    try {
-      if (!exists) {
-        await this.runHook("beforeCreate", savingObject);
+    if (!options.skipHooks) {
+      try {
+        if (!exists) {
+          await this.runHook("beforeCreate", savingObject);
+        }
+        await this.runHook("beforeSave", savingObject as T, { exists });
+      } catch (err) {
+        // Give them back their original object
+        return object;
       }
-      await this.runHook("beforeSave", savingObject as T, { exists });
-    } catch (err) {
-      // Give them back their original object
-      return object;
     }
 
     // Do the actual saving
@@ -259,9 +265,12 @@ export default class Model<T extends IModel> {
     });
     savingObject = await this.saveRelations(savingObject as T, options);
 
-    await this.runHook("afterSave", savingObject, { exists });
-    if (!exists) {
-      await this.runHook("afterCreate", savingObject);
+    // run the after hooks
+    if (!options.skipHooks) {
+      await this.runHook("afterSave", savingObject, { exists });
+      if (!exists) {
+        await this.runHook("afterCreate", savingObject);
+      }
     }
 
     return savingObject;

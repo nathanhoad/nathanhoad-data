@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import Knex from "knex";
+import knex, { Knex } from "knex";
 
 import Model from "./Model";
 import { IModel, ModelOptions } from "./types";
@@ -15,7 +15,7 @@ export default class Database {
    * Instanciate a new database
    * @param connectionOrKnex
    */
-  constructor(connectionOrKnex?: string | Knex | boolean) {
+  constructor(connectionOrKnex?: string | any | boolean) {
     this.models = {};
     this.knex = null;
 
@@ -36,7 +36,7 @@ export default class Database {
       const connection =
         connectionOrKnex || process.env.NODE_ENV == "test" ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-      this.knex = Knex({
+      this.knex = knex({
         client: "pg",
         connection
       });

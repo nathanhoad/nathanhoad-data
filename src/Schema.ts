@@ -84,7 +84,7 @@ export async function migrate(): Promise<IMigrationResult> {
   process.env.NODE_ENV = "test";
   database.connect();
   try {
-    await database.knex.migrate.latest();
+    await database.knex.migrate.latest(migrationConfig);
   } catch (err) {
     // Already migrated (most likely we are running our own tests)
   }
@@ -153,7 +153,7 @@ export async function listMigrations(): Promise<IMigrationList> {
   await database.disconnect();
 
   return {
-    completed,
+    completed: completed.map(c => c.name),
     pending: pending.map(m => m.file)
   };
 }

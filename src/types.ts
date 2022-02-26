@@ -1,5 +1,5 @@
 import Database from "./Database";
-import Knex from "knex";
+import { Knex } from "knex";
 
 export type TableSchema = { [column: string]: Knex.ColumnInfo };
 

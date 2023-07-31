@@ -2,7 +2,6 @@ import i from "i";
 import FS from "fs-extra";
 import Path from "path";
 import ejs from "ejs";
-import { format } from "prettier";
 
 import Database from "./Database";
 import { TableSchema } from "./types";
@@ -62,8 +61,7 @@ export async function makeMigration(migrationName: string): Promise<string> {
   const migrationsPath = Path.join(guessRootPath(), "migrations");
   await FS.ensureDir(migrationsPath);
   const path = Path.join(migrationsPath, fileName);
-
-  await FS.writeFile(path, format(fileContents, { printWidth: 120, tabWidth: 2, parser: "babel" }));
+  await FS.writeFile(path, fileContents);
 
   return path;
 }

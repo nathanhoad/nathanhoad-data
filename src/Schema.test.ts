@@ -27,8 +27,8 @@ describe("Schema", () => {
     const createFileName = await makeMigration("create-lists");
     const createFileContents = await FS.readFile(createFileName, "utf8");
 
-    expect(createFileContents).toContain(`createTable("lists"`);
-    expect(createFileContents).toContain(`dropTable("lists"`);
+    expect(createFileContents).toContain(`createTable('lists'`);
+    expect(createFileContents).toContain(`dropTable('lists'`);
 
     expect(await version()).toBe("none");
 
@@ -45,11 +45,11 @@ describe("Schema", () => {
     const modifyFileName = await makeMigration("add-name-and-looked-at-and-thing-id-to-lists");
     const modifyFileContents = await FS.readFile(modifyFileName, "utf8");
 
-    expect(modifyFileContents).toContain(`table("lists"`);
-    expect(modifyFileContents).toContain(`table.string("name");`);
-    expect(modifyFileContents).toContain(`table.timestamp("lookedAt");`);
-    expect(modifyFileContents).toContain(`table.uuid("thingId");`);
-    expect(modifyFileContents).toContain(`table.index("thingId");`);
+    expect(modifyFileContents).toContain(`table('lists'`);
+    expect(modifyFileContents).toContain(`table.string('name');`);
+    expect(modifyFileContents).toContain(`table.timestamp('lookedAt');`);
+    expect(modifyFileContents).toContain(`table.uuid('thingId');`);
+    expect(modifyFileContents).toContain(`table.index('thingId');`);
 
     migrations = await listMigrations();
     expect(migrations.pending.length).toBe(1);

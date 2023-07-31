@@ -231,8 +231,8 @@ export default class Model<T extends IModel> {
       typeof options.exists === "boolean"
         ? options.exists
         : await this.knex(options)
-            .where({ id: savingObject.id })
-            .then((rows: any) => rows.length > 0);
+          .where({ id: savingObject.id })
+          .then((rows: any) => rows.length > 0);
 
     // Before hooks can cancel a save
     if (!options.skipHooks) {
@@ -555,7 +555,7 @@ export default class Model<T extends IModel> {
   private async saveRelations(object: T, options: QueryOptions = {}): Promise<T> {
     const { availableRelations } = this.options;
 
-    if (!availableRelations || availableRelations.length === 0) return object;
+    if (!availableRelations || Object.values(availableRelations).length === 0) return object;
 
     const relationProperties = Object.keys(object).filter((key: string) =>
       Object.keys(availableRelations).includes(key)
@@ -872,8 +872,8 @@ export default class Model<T extends IModel> {
             // Make a list of rows that match up with the result
             const joinIds = relation.joins
               ? relation.joins
-                  .filter(j => j[relation.properties.sourceKey] == result.id)
-                  .map(j => j[relation.properties.key])
+                .filter(j => j[relation.properties.sourceKey] == result.id)
+                .map(j => j[relation.properties.key])
               : [];
             result[relation.name] = relation.rows.filter(r => joinIds.includes(r.id));
             break;
